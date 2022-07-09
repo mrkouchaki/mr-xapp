@@ -189,6 +189,8 @@ def connectdb(thread=False):
         print("cell_data: ", cell_data)
 
 def start(thread=False):
+ 
+    print('entered Starrrrrrrrrrrt')
     """
     This is a convenience function that allows this xapp to run in Docker
     for "real" (no thread, real SDL), but also easily modified for unit testing
