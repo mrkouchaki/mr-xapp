@@ -114,7 +114,58 @@ class DATReadWrite(object):
         """
         self.client.write_points(df, meas)
 
+class DATABASE(object):
+    r""" DATABASE takes an input as database name. It creates a client connection
+      to influxDB and It reads/ writes UE data for a given dabtabase and a measurement.
+    Parameters
+    ----------
+    host: str (default='r4-influxdb.ricplt.svc.cluster.local')
+        hostname to connect to InfluxDB
+    port: int (default='8086')
+        port to connect to InfluxDB
+    username: str (default='root')
+        user to connect
+    password: str (default='root')
+        password of the use
+    Attributes
+    ----------
+    client: influxDB client
+        DataFrameClient api to connect influxDB
+    data: DataFrame
+        fetched data from database
+    """
 
+    def __init__(self, dbname, user='root', password='root', host="r4-influxdb.ricplt", port='8086'):
+        self.data = None
+        self.client = DataFrameClient(host, port, user, password, dbname)
+
+    def read_data(self, meas, limit=100):
+        """Read data method for a given measurement and limit
+        Parameters
+        ----------
+        meas: str (default='cellMeasReport')
+        limit:int (defualt=100)
+        """
+
+        result = self.client.query('select * from ' + meas + ' limit ' + str(limit))
+        print("Querying data : " + meas + " : size - " + str(len(result[meas])))
+        try:
+            if len(result[meas]) != 0:
+                self.data = result[meas]
+                self.data['measTimeStampRf'] = self.data.index
+            else:
+                raise NoDataError
+
+        except NoDataError:
+            print('Data not found for ' + meas + ' vnf')
+
+    def write_lp_prediction(self, df, meas='LP'):
+        """Write data method for a given measurement
+        Parameters
+        ----------
+        meas: str (default='LP')
+        """
+        self.client.write_points(df, meas)
 
 # In[ ]:
 
