@@ -27,8 +27,8 @@ from zipfile import ZipFile
 import json
 from os import getenv
 from ricxappframe.xapp_frame import RMRXapp, rmr, Xapp
-from lp import sdl
-from lp.exceptions import UENotFound, CellNotFound
+from mr import sdl
+#from lp.exceptions import UENotFound, CellNotFound
 
 import os
 import sys
@@ -41,8 +41,8 @@ from torch.utils.data import TensorDataset, DataLoader
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
-from lp.db import DATABASE, DUMMY
-import lp.populate as populate
+from mr.db import DATABASE, DUMMY
+import mr.populate as populate
 
 xapp = None
 pos = 0
@@ -50,6 +50,10 @@ cell_data = None
 rmr_xapp = None
 ai_model = None
 
+class UENotFound(BaseException):
+    pass
+class CellNotFound(BaseException):
+    pass
 
 def post_init(self):
     """
@@ -75,7 +79,7 @@ def default_handler(self, summary, sbuf):
     self.rmr_free(sbuf)
 
 
-def lp_req_handler(self, summary, sbuf):
+def mr_req_handler(self, summary, sbuf):
     """
     This is the main handler for this xapp, which handles load prediction requests.
     This app fetches a set of data from SDL, and calls the predict method to perform
@@ -92,9 +96,9 @@ def lp_req_handler(self, summary, sbuf):
     try:
         req = json.loads(summary[rmr.RMR_MS_PAYLOAD])  # input should be a json encoded as bytes
         ue_list = req["UEPredictionSet"]
-        self.logger.debug("lp_req_handler processing request for UE list {}".format(ue_list))
+        self.logger.debug("mr_req_handler processing request for UE list {}".format(ue_list))
     except (json.decoder.JSONDecodeError, KeyError):
-        self.logger.warning("lp_req_handler failed to parse request: {}".format(summary[rmr.RMR_MS_PAYLOAD]))
+        self.logger.warning("mr_req_handler failed to parse request: {}".format(summary[rmr.RMR_MS_PAYLOAD]))
         return
 
     # iterate over the UEs, fetches data for each UE and perform prediction
@@ -103,7 +107,7 @@ def lp_req_handler(self, summary, sbuf):
             uedata = sdl.get_uedata(self, ueid)
             predict(self, uedata)
         except UENotFound:
-            self.logger.warning("lp_req_handler received a TS Request for a UE that does not exist!")
+            self.logger.warning("mr_req_handler received a TS Request for a UE that does not exist!")
 
 def entry(self):
     """  Read from DB in an infinite loop and run prediction every second
@@ -142,14 +146,14 @@ def load_model_parameter():
     print(cwd)
     print(os.listdir(cwd))
     if not os.path.exists(PATH):
-        with ZipFile('lp/model.zip', 'r') as zip:
+        with ZipFile('mr/model.zip', 'r') as zip:
             zip.printdir()
             zip.extractall()
     input_dim = 10
     hidden_dim = 256
     layer_dim = 3
     output_dim = 2
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
     model = LSTMClassifier(input_dim, hidden_dim, layer_dim, output_dim)
     # model = model.to(device)
     model.load_state_dict(torch.load(PATH))
