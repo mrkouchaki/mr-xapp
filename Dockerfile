@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-miniconda3
+FROM python:3.7-alpine
 # RMR setup
 RUN mkdir -p /opt/route_mr/
 
