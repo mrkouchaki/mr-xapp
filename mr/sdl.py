@@ -18,7 +18,12 @@
 lp module responsible for SDL queries
 """
 import json
-from lp.exceptions import UENotFound
+#from lp.exceptions import UENotFound
+
+class UENotFound(BaseException):
+    pass
+class CellNotFound(BaseException):
+    pass
 
 # namespaces
 UE_NS = "TS-UE-metrics"
