@@ -165,7 +165,7 @@ def predict(self, celldata):
 def load_model_parameter():
     print('/////////////enter def load_model_parameters////////////////')
     PATH = 'model.pth'
-    print('PATH = 'model.pth'=', PATH)      
+    print('PATH = model.pth=', PATH)      
     cwd = os.getcwd()
     print('cwd=os.getcwd=', cwd)
     print('os.listdir(cwd)=', os.listdir(cwd))
@@ -233,7 +233,7 @@ def connectdb(thread=False):
         print('db.read_data("cellMeas")=', db.read_data("cellMeas"))
         cell_data = db.data.values.tolist()  # needs to be updated in future when live feed will be coming through KPIMON to influxDB
         print('cell_data = db.data.values.tolist()=', cell_data)
-        print("cell_data: ", cell_data)
+        #print('cell_data:, cell_data)
 
 def start(thread=False):
  
@@ -245,7 +245,7 @@ def start(thread=False):
     """
     global xapp, ai_model
     fake_sdl = getenv("USE_FAKE_SDL", None)
-    print('fake_sdl = getenv("USE_FAKE_SDL", None)=', fake_sdl)
+    print('fake_sdl = getenv(USE_FAKE_SDL, None)=', fake_sdl)
     xapp = Xapp(entrypoint=entry, rmr_port=4560, use_fake_sdl=fake_sdl)
     print('xapp = Xapp(entrypoint=entry, rmr_port=4560, use_fake_sdl=fake_sdl)=', xapp)
     connectdb(thread)
@@ -268,8 +268,8 @@ def get_stats():
     """
     hacky for now, will evolve
     """
-    print('"DefCalled":rmr_xapp.def_hand_called=', rmr_xapp.def_hand_called)
-    print('"SteeringRequests":rmr_xapp.traffic_steering_requests=', rmr_xapp.traffic_steering_requests) 
+    print('DefCalled:rmr_xapp.def_hand_called=', rmr_xapp.def_hand_called)
+    print('SteeringRequests:rmr_xapp.traffic_steering_requests=', rmr_xapp.traffic_steering_requests) 
     return {"DefCalled": rmr_xapp.def_hand_called,
             "SteeringRequests": rmr_xapp.traffic_steering_requests}
 
