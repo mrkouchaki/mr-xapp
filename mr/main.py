@@ -76,11 +76,13 @@ def default_handler(self, summary, sbuf):
     Function that processes messages for which no handler is defined
     """
     self.def_hand_called += 1
+    print('self.def_hand_called += 1=', self.def_hand_called)
     self.logger.warning("default_handler unexpected message type {}".format(summary[rmr.RMR_MS_MSG_TYPE]))
     self.rmr_free(sbuf)
 
 
 def mr_req_handler(self, summary, sbuf):
+    print('enter def mr_req handler')
     """
     This is the main handler for this xapp, which handles load prediction requests.
     This app fetches a set of data from SDL, and calls the predict method to perform
@@ -97,20 +99,25 @@ def mr_req_handler(self, summary, sbuf):
     try:
         req = json.loads(summary[rmr.RMR_MS_PAYLOAD])  # input should be a json encoded as bytes
         ue_list = req["UEPredictionSet"]
+        print('ue_list=req["UEPredictionSet"] in mr_req_handler -1st try=', ue_list)
         self.logger.debug("mr_req_handler processing request for UE list {}".format(ue_list))
     except (json.decoder.JSONDecodeError, KeyError):
         self.logger.warning("mr_req_handler failed to parse request: {}".format(summary[rmr.RMR_MS_PAYLOAD]))
         return
-
+    print('mr_req_handler aftr 1st try=', ue_list)
     # iterate over the UEs, fetches data for each UE and perform prediction
     for ueid in ue_list:
         try:
             uedata = sdl.get_uedata(self, ueid)
+            print('uedata = sdl.get_uedata(self, ueid)=', uedata)
             predict(self, uedata)
+            print('predict(self, uedata)=', predict(self, uedata))
         except UENotFound:
+            print('UENotFound')
             self.logger.warning("mr_req_handler received a TS Request for a UE that does not exist!")
 
 def entry(self):
+    print('enter def entry')
     """  Read from DB in an infinite loop and run prediction every second
       TODO: do training as needed in the future
     """
@@ -119,29 +126,37 @@ def entry(self):
         schedule.run_pending()
 
 def run_prediction(self):
+    print('enter def run_prediction')
     """Read the latest cell_meas sample from influxDB and run it by the model inference
     """
 
     global pos
     sample = [3735, 0, 27648, 2295, 18, -1, 16383,-1, -1, -1]
+    print('sample=[3735,...]=', sample]
     if cell_data:
         pos = (pos + 1) % len(cell_data)  # iterate through entire list one at a time
+        print('pos=(pos + 1) % len(cell_data)=', pos)
         sample = cell_data[pos]
+        print('sample = cell_data[pos]=', sample)
     predict(self, sample)
 
 def predict(self, celldata):
+    print('enter def predict')      
     """
     This is the method that's to perform prediction based on a model
     For now it just returns dummy data
     :return:
     """
     ai_model = load_model_parameter()
+    print('ai_model.summary()=', ai_model.summary())      
     ret = predict_unseen_data(ai_model, celldata)
+    print('ret=predict_unseen_data(ai_model, celldata)=', ret)
     print("celldata: ", celldata)
     print("Classification: ", ret)
     return ret
 
 def load_model_parameter():
+    print('enter def load_model_parameters')
     PATH = 'model.pth'
     cwd = os.getcwd()
     print(cwd)
@@ -156,41 +171,60 @@ def load_model_parameter():
     output_dim = 2
     device = "cpu"
     model = LSTMClassifier(input_dim, hidden_dim, layer_dim, output_dim)
+    print('model=LSTClassifier=', model.summary())      
     # model = model.to(device)
     model.load_state_dict(torch.load(PATH))
     model.eval()
+    print('model.eval()=', model.summary())      
     # print(model)
     return model
 
 def predict_unseen_data(model, unseen_data):
+    print('enter def predict_unseen_data')
     np_data = np.asarray(unseen_data, dtype=np.float32)
+    print('np_data=', np_data)
     X_grouped = np_data[newaxis, newaxis, :]
     X_grouped = torch.tensor(X_grouped.transpose(0, 2, 1)).float()
+    print('X_grouped=', X_grouped)
     y_fake = torch.tensor([0] * len(X_grouped)).long()
     tensor_test = TensorDataset(X_grouped, y_fake)
+    print('tensor_test=', tensor_test)      
     test_dl = DataLoader(tensor_test, batch_size=1, shuffle=False)
+    print('test_dl=', test_dl)       
     ret = []
     for batch, _ in test_dl:
         batch = batch.permute(0, 2, 1)
+        print('batch=', batch)
         out = model(batch)
+        print('out=', out)  
         y_hat = F.log_softmax(out, dim=1).argmax(dim=1)
+        print('y_hat=', y_hat)
         ret += y_hat.tolist()
+        print('ret += y_hat.tolist()=', ret)
     if ret[0] == 0:
+        print('ret[0] == 0')  
         return "Normal"
     return "Congestion"
 
 def connectdb(thread=False):
+    print('enter def connectdb')
     # Create a connection to InfluxDB if thread=True, otherwise it will create a dummy data instance
     global db
     global cell_data
     if thread:
+        print('enter if(thread) in connectdb')  
         db = DUMMY()
+        print('db =DUMMY()=', db)  
     else:
+        print('else= populate.populate()')  
         populate.populatedb()  # temporary method to populate db, it will be removed when data will be coming through KPIMON to influxDB
 
         db = DATABASE('CellData')
+        print('db =  DATABASE(celldata) =', db) 
         db.read_data("cellMeas")
+        print('db.read_data("cellMeas")=', db.read_data("cellMeas"))
         cell_data = db.data.values.tolist()  # needs to be updated in future when live feed will be coming through KPIMON to influxDB
+        print('cell_data = db.data.values.tolist()=', cell_data)
         print("cell_data: ", cell_data)
 
 def start(thread=False):
@@ -203,6 +237,7 @@ def start(thread=False):
     """
     global xapp, ai_model
     fake_sdl = getenv("USE_FAKE_SDL", None)
+    print('fake_sdl = getenv("USE_FAKE_SDL", None)=', fake_sdl)
     xapp = Xapp(entrypoint=entry, rmr_port=4560, use_fake_sdl=fake_sdl)
     connectdb(thread)
     ai_model = load_model_parameter()
@@ -212,6 +247,7 @@ def start(thread=False):
 
 
 def stop():
+    print('enter def stop')      
     """
     can only be called if thread=True when started
     """
@@ -219,14 +255,19 @@ def stop():
 
 
 def get_stats():
+    print('enter def get_stats()')
     """
     hacky for now, will evolve
     """
+    print('"DefCalled":rmr_xapp.def_hand_called=', rmr_xapp.def_hand_called)
+    print('"SteeringRequests":rmr_xapp.traffic_steering_requests=', rmr_xapp.traffic_steering_requests) 
     return {"DefCalled": rmr_xapp.def_hand_called,
             "SteeringRequests": rmr_xapp.traffic_steering_requests}
 
 class LSTMClassifier(nn.Module):
+    print('enter class LSTClassifier')      
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim):
+        print('enter def __init__ in LST')  
         super().__init__()
         self.hidden_dim = hidden_dim
         self.layer_dim = layer_dim
@@ -236,12 +277,14 @@ class LSTMClassifier(nn.Module):
         self.hidden = None
 
     def forward(self, x):
+        print('enter def forward in LST') 
         h0, c0 = self.init_hidden(x)
         out, (hn, cn) = self.rnn(x, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
 
     def init_hidden(self, x):
+        print('enter def init_hidden in LST')   
         h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim)
         c0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim)
         return [t for t in (h0, c0)]
