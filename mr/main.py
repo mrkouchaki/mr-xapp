@@ -206,6 +206,8 @@ def start(thread=False):
     xapp = Xapp(entrypoint=entry, rmr_port=4560, use_fake_sdl=fake_sdl)
     connectdb(thread)
     ai_model = load_model_parameter()
+    ai_model.summary()
+    print('ai_model.summary=', ai_model.summary())
     xapp.run()
 
 
