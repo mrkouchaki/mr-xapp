@@ -24,6 +24,7 @@ import datetime
 dbname = 'lpdatabase'
 
 class INSERTDATA:
+    print('///////////////enter INSERTDATA class in populate\\\\\\\\\\\\\\\\\\\')
 
     def __init__(self):
         print('enter insert init')
