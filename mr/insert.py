@@ -17,10 +17,10 @@ import datetime
 
 
 class INSERTDATA:
-    print('//////////////enter INSERDATA class in inser\\\\\\\\\\\\\\')
+    print('//////////////enter INSERDATA class in inser////////////')
 
     def __init__(self):
-        print('//////////enter def __init__\\\\\\\\\\\\\\')
+        print('//////////enter def __init__/////////////////')
         host = 'r4-influxdb.ricplt'
         print('host=', host)
         self.client = DataFrameClient(host, '8086', 'root', 'root')
@@ -32,7 +32,7 @@ class INSERTDATA:
         print('self.createdb(UEData)=', self.createdb('UEData'))
 
     def createdb(self, dbname):
-        print('//////////enter def createdb\\\\\\\\\\\\\')
+        print('//////////enter def createdb////////////////////')
         print("Create database: " + dbname)
         self.client.create_database(dbname)
         print('self.client.create_database(dbname)=', self.client.create_database(dbname))
@@ -41,19 +41,19 @@ class INSERTDATA:
         print('self.client.switch_database(dbname)=', self.client.switch_database(dbname))
 
     def dropdb(self, dbname):
-        print('//////////enter def dropdb\\\\\\\\\\\\\')
+        print('//////////enter def dropdb/////////////////////')
         print("DROP database: " + dbname)
         self.client.drop_database(dbname)
 
     def dropmeas(self, measname):
-        print('//////////enter def dropmeas\\\\\\\\\\\\\')
+        print('//////////enter def dropmeas////////////////')
         print("DROP MEASUREMENT: " + measname)
         self.client.query('DROP MEASUREMENT '+measname)
         print('self.client.query(DROP MEASUREMENT +measname)=', self.client.query('DROP MEASUREMENT '+measname))
 
 
 def explode(df):
-    print('//////////enter def explode(df):\\\\\\\\\\\\\')
+    print('//////////enter def explode(df)://////////////////')
     print('df=', df)
     print('df.columns=', df.columns)
     for col in df.columns:
@@ -79,7 +79,7 @@ def explode(df):
 
 
 def jsonToTable(df):
-    print('//////////enter def jsonToTable(df):\\\\\\\\\\\\\')
+    print('//////////enter def jsonToTable(df)://////////////////')
     df.index = range(len(df))
     print('df.index = range(len(df))=', df.index)
     cols = [col for col in df.columns if isinstance(df.iloc[0][col], dict) or isinstance(df.iloc[0][col], list)]
@@ -101,7 +101,7 @@ def jsonToTable(df):
 
 
 def time(df):
-    print('//////////enter def time(df):\\\\\\\\\\\\\')
+    print('//////////enter def time(df):////////////////////')
     df.index = pd.date_range(start=datetime.datetime.now(), freq='10ms', periods=len(df))
     print('df.index =',df.index )
     df['measTimeStampRf'] = df['measTimeStampRf'].apply(lambda x: str(x))
@@ -111,7 +111,7 @@ def time(df):
 
 
 def populatedb():
-    print('//////////enter def populatedb():\\\\\\\\\\\\\')
+    print('//////////enter def populatedb():///////////////////')
     data = pd.read_csv('mr/cells.csv')
     print('data = pd.read_csv(mr/cells.csv)=', data)
     data = time(data)
