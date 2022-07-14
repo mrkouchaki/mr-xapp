@@ -58,7 +58,7 @@ class CellNotFound(BaseException):
     pass
 
 def post_init(self):
-    print('///////enter def post_init\\\\\\\\\\\')
+    print('///////enter def post_init__/////////////////')
     """
     Function that runs when xapp initialization is complete
     """
@@ -67,7 +67,7 @@ def post_init(self):
 
 
 def handle_config_change(self, config):
-    print('////////enter def handle_config_change\\\\\\\\\\\')
+    print('////////enter def handle_config_change//////////////')
     """
     Function that runs at start and on every configuration file change.
     """
@@ -75,7 +75,7 @@ def handle_config_change(self, config):
 
 
 def default_handler(self, summary, sbuf):
-    print('/////////enter def default_handler\\\\\\\\')
+    print('/////////enter def default_handler///////////////')
     """
     Function that processes messages for which no handler is defined
     """
@@ -86,7 +86,7 @@ def default_handler(self, summary, sbuf):
 
 
 def mr_req_handler(self, summary, sbuf):
-    print('///////////enter def mr_req handler\\\\\\\\\\\\\')
+    print('///////////enter def mr_req handler/////////////')
     """
     This is the main handler for this xapp, which handles load prediction requests.
     This app fetches a set of data from SDL, and calls the predict method to perform
@@ -124,7 +124,7 @@ def mr_req_handler(self, summary, sbuf):
             self.logger.warning("mr_req_handler received a TS Request for a UE that does not exist!")
 
 def entry(self):
-    print('////////////enter def entry\\\\\\\\\\\\\')
+    print('////////////enter def entry///////////////')
     """  Read from DB in an infinite loop and run prediction every second
       TODO: do training as needed in the future
     """
@@ -133,7 +133,7 @@ def entry(self):
         schedule.run_pending()
 
 def run_prediction(self):
-    print('///////////////enter def run_prediction\\\\\\\\\\\\\\\\\\\')
+    print('///////////////enter def run_prediction///////////////')
     """Read the latest cell_meas sample from influxDB and run it by the model inference
     """
 
@@ -148,7 +148,7 @@ def run_prediction(self):
     predict(self, sample)
 
 def predict(self, celldata):
-    print('/////////////enter def predict\\\\\\\\\\\\\\\')      
+    print('/////////////enter def predict/////////////////')      
     """
     This is the method that's to perform prediction based on a model
     For now it just returns dummy data
@@ -163,7 +163,7 @@ def predict(self, celldata):
     return ret
 
 def load_model_parameter():
-    print('/////////////enter def load_model_parameters\\\\\\\\\\\\\\')
+    print('/////////////enter def load_model_parameters////////////////')
     PATH = 'model.pth'
     print('PATH = 'model.pth'=', PATH)      
     cwd = os.getcwd()
@@ -188,7 +188,7 @@ def load_model_parameter():
     return model
 
 def predict_unseen_data(model, unseen_data):
-    print('/////////////////enter def predict_unseen_data\\\\\\\\\\\\\\\\\\\')
+    print('/////////////////enter def predict_unseen_data///////////////////')
     np_data = np.asarray(unseen_data, dtype=np.float32)
     print('np_data=', np_data)
     X_grouped = np_data[newaxis, newaxis, :]
@@ -215,16 +215,16 @@ def predict_unseen_data(model, unseen_data):
     return "Congestion"
 
 def connectdb(thread=False):
-    print('////////////////////enter def connectdb\\\\\\\\\\\\\\\\\\\\\\\\\')
+    print('////////////////////enter def connectdb///////////////////')
     # Create a connection to InfluxDB if thread=True, otherwise it will create a dummy data instance
     global db
     global cell_data
     if thread:
-        print('///////////////enter if(thread) in connectdb\\\\\\\\\\\\\\\\\\\')  
+        print('///////////////enter if(thread) in connectdb///////////////////')  
         db = DUMMY()
         print('db =DUMMY()=', db)  
     else:
-        print('//////enter else= populate.populate()\\\\\\\\\\\\\\\\')  
+        print('//////enter else= populate.populate()////////////////')  
         populate.populatedb()  # temporary method to populate db, it will be removed when data will be coming through KPIMON to influxDB
 
         db = DATABASE('CellData')
@@ -237,7 +237,7 @@ def connectdb(thread=False):
 
 def start(thread=False):
  
-    print('////////////////entered Starrrrrrrrrrrt\\\\\\\\\\\\\\\\\\')
+    print('////////////////entered Starrrrrrrrrrrt///////////////////')
     """
     This is a convenience function that allows this xapp to run in Docker
     for "real" (no thread, real SDL), but also easily modified for unit testing
@@ -256,7 +256,7 @@ def start(thread=False):
 
 
 def stop():
-    print('/////////////enter def stop\\\\\\\\\\\\\\\\\\')      
+    print('/////////////enter def stop//////////////////')      
     """
     can only be called if thread=True when started
     """
@@ -264,7 +264,7 @@ def stop():
 
 
 def get_stats():
-    print('//////////////////enter def get_stats()\\\\\\\\\\\\\\\\\\')
+    print('//////////////////enter def get_stats()////////////////////')
     """
     hacky for now, will evolve
     """
@@ -274,9 +274,9 @@ def get_stats():
             "SteeringRequests": rmr_xapp.traffic_steering_requests}
 
 class LSTMClassifier(nn.Module):
-    print('/////////////////enter class LSTClassifier\\\\\\\\\\\\\\\\\\\')      
+    print('/////////////////enter class LSTClassifier////////////////////')      
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim):
-        print('///////enter def __init__ in LST\\\\\\\\\\')  
+        print('///////enter def __init__ in LST//////////////////')  
         super().__init__()
         self.hidden_dim = hidden_dim
         self.layer_dim = layer_dim
@@ -286,14 +286,14 @@ class LSTMClassifier(nn.Module):
         self.hidden = None
 
     def forward(self, x):
-        print('////////enter def forward in LST\\\\\\\\\\') 
+        print('////////enter def forward in LST//////////////////') 
         h0, c0 = self.init_hidden(x)
         out, (hn, cn) = self.rnn(x, (h0, c0))
         out = self.fc(out[:, -1, :])
         return out
 
     def init_hidden(self, x):
-        print('/////////enter def init_hidden in LST\\\\\\\\\\\\\')   
+        print('/////////enter def init_hidden in LST//////////////////')   
         h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim)
         c0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim)
         return [t for t in (h0, c0)]
