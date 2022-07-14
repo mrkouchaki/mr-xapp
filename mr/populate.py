@@ -21,7 +21,7 @@ This will be used before the LP xApp can read cell measurements from KPM, while 
 import pandas as pd
 from influxdb import DataFrameClient
 import datetime
-dbname = 'lpdatabase'
+#dbname = 'lpdatabase'
 
 class INSERTDATA:
     print('///////////////enter INSERTDATA class in populate\\\\\\\\\\\\\\\\\\\')
@@ -29,16 +29,16 @@ class INSERTDATA:
     def __init__(self):
         print('enter insert init')
         host = 'localhost'
-        self.client = DataFrameClient(host, '8086')
+        self.client = DataFrameClient(host, '8086', 'root', 'root')
         print(self.client.get_list_database())
-        #self.dropdb('CellData')
+        self.dropdb('CellData')
         self.createdb('CellData')
 
     def createdb(self, dbname):
         print('enter insert createdb')
         print("Create database: " + dbname)
         self.client.create_database(dbname)
-        print(self.client.get_list_database())
+        print('self.client.get_list_database()=', self.client.get_list_database())
         self.client.switch_database(dbname)
 
     def dropdb(self, dbname):
@@ -50,6 +50,7 @@ class INSERTDATA:
         print('enter insert dropmeas')
         print("DROP MEASUREMENT: " + measname)
         self.client.query('DROP MEASUREMENT '+measname)
+        print('elf.client.query(DROP MEASUREMENT +measname)=', elf.client.query('DROP MEASUREMENT '+measname))
 
 def time(df):
     print('enter time')
@@ -58,12 +59,13 @@ def time(df):
     print(df['measTimeStampRf'])
     print('lambda x: str(x)=', lambda x: str(x))
     df['measTimeStampRf'] = df['measTimeStampRf'].apply(lambda x: str(x))
+    print('df=', df)
     return df
 
 def populatedb():
-    data = pd.read_csv('/home/mreza/xApp_v1/xApp_n1/xapp_n1_main/cells.csv')
+    data = pd.read_csv('mr/cells.csv')
     data
-    print(data)
+    print('data = pd.read_csv(mr/cells.csv)=', data)
     data = time(data)
     print('data after time(data)=', data)
 
@@ -73,5 +75,5 @@ def populatedb():
     db
     print('db =', db)
     db.client.write_points(data, 'cellMeas')
-    print(db.client.write_points(data, 'cellMeas'))
+    print('db.client.write_points(data, cellMeas)=', db.client.write_points(data, 'cellMeas'))
     del data
