@@ -24,10 +24,10 @@ import datetime
 #dbname = 'lpdatabase'
 
 class INSERTDATA:
-    print('///////////////enter INSERTDATA class in populate\\\\\\\\\\\\\\\\\\\')
+    print('///////////////enter INSERTDATA class in populate/////////////')
 
     def __init__(self):
-        print('enter insert init')
+        print('///////enter insert init////////')
         host = 'localhost'
         self.client = DataFrameClient(host, '8086', 'root', 'root')
         print(self.client.get_list_database())
@@ -35,25 +35,25 @@ class INSERTDATA:
         self.createdb('CellData')
 
     def createdb(self, dbname):
-        print('enter insert createdb')
+        print('///////enter insert createdb//////////')
         print("Create database: " + dbname)
         self.client.create_database(dbname)
         print('self.client.get_list_database()=', self.client.get_list_database())
         self.client.switch_database(dbname)
 
     def dropdb(self, dbname):
-        print('enter insert dropdb')
+        print('//////////enter insert dropdb/////////')
         print("DROP database: " + dbname)
         self.client.drop_database(dbname)
 
     def dropmeas(self, measname):
-        print('enter insert dropmeas')
+        print('//////////enter insert dropmeas/////////////')
         print("DROP MEASUREMENT: " + measname)
         self.client.query('DROP MEASUREMENT '+measname)
         print('elf.client.query(DROP MEASUREMENT +measname)=', elf.client.query('DROP MEASUREMENT '+measname))
 
 def time(df):
-    print('enter time')
+    print('///////////////enter def time//////////////')
     df.index = pd.date_range(start=datetime.datetime.now(), freq='10ms', periods=len(df))
     print('df.index=',df.index)
     print(df['measTimeStampRf'])
@@ -63,6 +63,7 @@ def time(df):
     return df
 
 def populatedb():
+    print('/////////////enter def populatedb()///////////')
     data = pd.read_csv('mr/cells.csv')
     data
     print('data = pd.read_csv(mr/cells.csv)=', data)
