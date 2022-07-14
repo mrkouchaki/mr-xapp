@@ -139,7 +139,7 @@ def run_prediction(self):
 
     global pos
     sample = [3735, 0, 27648, 2295, 18, -1, 16383,-1, -1, -1]
-    print('sample=[3735,...]=', sample]
+    print('sample=[3735,...]=', sample)
     if cell_data:
         pos = (pos + 1) % len(cell_data)  # iterate through entire list one at a time
         print('pos=(pos + 1) % len(cell_data)=', pos)
