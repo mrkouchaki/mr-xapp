@@ -25,6 +25,7 @@ class UENotFound(BaseException):
 class CellNotFound(BaseException):
     pass
 
+print('///////////enter sdl.py//////////')
 # namespaces
 UE_NS = "TS-UE-metrics"
 CELL_NS = "TS-cell-metrics"
@@ -67,7 +68,7 @@ CELL_KEY_LIST = set(
 
 print('CELL_KEY_LIST=', CELL_KEY_LIST)
 def get_uedata(xapp_ref, ueid):
-    print('//////////enter def get_uedata in sdl\\\\\\\\\\\\\\\\')
+    print('//////////enter def get_uedata in sdl/////////////////')
     """
     this function takes in a single ueid and:
         - fetches the current ue data
