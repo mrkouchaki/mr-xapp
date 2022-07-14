@@ -16,7 +16,7 @@ import datetime
 
 
 class DBCreateDrop:
-    print('///////////enter class DBCreatDrop\\\\\\\\\\\\')
+    print('///////////enter class DBCreatDrop/////////////')
     def __init__(self, dbname):
         print('enter insert init')
         host = 'localhost'
@@ -49,7 +49,7 @@ class DBCreateDrop:
 #class DATABASE(object):
 
 class DATReadWrite(object):
-    print('///////////enter class DATReadWrite\\\\\\\\\\\\')
+    print('///////////enter class DATReadWrite///////////////')
     r""" DATABASE takes an input as database name. It creates a client connection
       to influxDB and It reads/ writes UE data for a given dabtabase and a measurement.
 
@@ -116,7 +116,7 @@ class DATReadWrite(object):
         self.client.write_points(df, meas)
 
 class DATABASE(object):
-    print('///////////enter class DATABASE(object)\\\\\\\\\\\\')
+    print('///////////enter class DATABASE(object)////////////////////')
     r""" DATABASE takes an input as database name. It creates a client connection
       to influxDB and It reads/ writes UE data for a given dabtabase and a measurement.
     Parameters
@@ -138,13 +138,13 @@ class DATABASE(object):
     """
 
     def __init__(self, dbname, user='root', password='root', host="r4-influxdb.ricplt", port='8086'):
-        print('///////enter def __init__ in class DATABASE\\\\\\\\\\')
+        print('///////enter def __init__ in class DATABASE////////////////')
         self.data = None
         self.client = DataFrameClient(host, port, user, password, dbname)
         print('self.client=', self.client)
 
     def read_data(self, meas, limit=100):
-        print('///////enter def read_data(self, meas, limit=100): in class DATABASE\\\\\\\\\\')
+        print('///////enter def read_data(self, meas, limit=100): in class DATABASE///////////')
         """Read data method for a given measurement and limit
         Parameters
         ----------
@@ -173,7 +173,7 @@ class DATABASE(object):
             print('Data not found for ' + meas + ' vnf')
 
     def write_lp_prediction(self, df, meas='LP'):
-        print('///////enter def write_lp_prediction(self, df, meas=LP): in class DATABASE\\\\\\\\\\')
+        print('///////enter def write_lp_prediction(self, df, meas=LP): in class DATABASE///////////')
         """Write data method for a given measurement
         Parameters
         ----------
@@ -202,16 +202,16 @@ class DATABASE(object):
 #ad:
 
 class DUMMY:
-    print('///////////enter class DUMMY in db\\\\\\\\\\\\\\')
+    print('///////////enter class DUMMY in db/////////////////')
 
     def __init__(self):
-        print('///////enter def __init__ in class DUMMY\\\\\\\\\\')
+        print('///////enter def __init__ in class DUMMY/////////////////')
         self.ue = pd.read_csv('mr/valid.csv')
         print('self.ue= pd.read_csv(mr/valid.csv)=', self.ue)
         self.data = None
 
     def read_data(self, meas='ueMeasReport', limit=100000):
-        print('///////enter def read_data(self, meas=ueMeasReport, limit=100000): in class DATABASE\\\\\\\\\\')
+        print('///////enter def read_data(self, meas=ueMeasReport, limit=100000): in class DATABASE/////////')
         print('meas=', meas)
         if meas == 'valid':
             print('meas == valid:')
@@ -222,7 +222,7 @@ class DUMMY:
             print('self.data = self.ue.head(limit).drop(Anomaly, axis=1)=', self.data)
 
     def write_anomaly(self, df, meas_name='QP'):
-        print('///////enter def write_anomaly(self, df, meas_name=QP): in class DATABASE\\\\\\\\\\')
+        print('///////enter def write_anomaly(self, df, meas_name=QP): in class DATABASE/////////////')
         pass
 
     
@@ -231,13 +231,13 @@ class DUMMY:
 
 
 class Error(Exception):
-    print('////////enter class Error in db\\\\\\\\\\')
+    print('////////enter class Error in db////////////////')
     """Base class for other exceptions"""
     pass
 
 
 class NoDataError(Error):
-    print('////////enter class NoDataError in db\\\\\\\\\\')
+    print('////////enter class NoDataError in db//////////////////')
     """Raised when there is no data available in database for a given measurment"""
     pass
 
