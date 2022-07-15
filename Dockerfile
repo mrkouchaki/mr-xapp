@@ -19,5 +19,5 @@ COPY LICENSE.txt /tmp/
 # RUN mkdir -p /tmp/ad/
 COPY mr/ /mr
 RUN pip install /tmp
-ENV PYTHONUNBUFFERED=0
+ENV PYTHONUNBUFFERED=1
 CMD PYTHONPATH=/mr:/usr/lib/python3.7/site-packages/:$PYTHONPATH run-mr.py
