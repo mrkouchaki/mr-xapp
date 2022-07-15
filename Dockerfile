@@ -20,6 +20,6 @@ COPY LICENSE.txt /tmp/
 COPY mr/ /mr
 RUN pip install /tmp
 ENV PYTHONUNBUFFERED=1
-CMD ["python3", "-u", "mr.py"]
+CMD ["python3", "-u", "/mr/mr.py"]
 
 #CMD PYTHONPATH=/mr:/usr/lib/python3.7/site-packages/:$PYTHONPATH run-mr.py
